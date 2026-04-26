@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - EduArsip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 100; bottom: 30px; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.5s, bottom 0.5s; font-weight: bold; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        
+        /* Animasi berkedip cepat saat waktu mau habis */
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-fast { animation: pulse-fast 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <div id="toast">Notifikasi</div>
+
+    <nav class="bg-blue-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex-shrink-0 font-bold text-2xl tracking-wide">📚 EduArsip</a>
+                <div class="hidden md:flex space-x-4">
+                    <a href="index.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Materi</a>
+                    <a href="video.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Video</a>
+                    <a href="simulasi.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Simulasi</a>
+                    <a href="kuis.html" class="bg-pink-600 px-4 py-2 rounded-md font-bold transition shadow-sm border border-white">Main Kuis!</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 focus:outline-none">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 pb-3 shadow-inner">
+            <a href="index.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Materi Pengantar</a>
+            <a href="video.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Video Arsip</a>
+            <a href="simulasi.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Simulasi Praktik</a>
+            <a href="kuis.html" class="block w-full text-left px-4 py-3 bg-pink-600 font-bold transition border border-white text-white">Main Kuis!</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex justify-center items-center min-h-[80vh]">
+        
+        <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-2xl shadow-2xl text-center border-t-8 border-pink-500" id="start-area">
+            <div class="text-6xl md:text-8xl mb-6">🎯</div>
+            <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Uji Pengetahuanmu!</h2>
+            <p class="text-gray-600 mb-8 text-lg">Kamu akan diberikan beberapa pertanyaan pilihan ganda. Jawablah dengan cepat dan tepat, karena <strong>setiap soal hanya memiliki waktu 15 detik!</strong></p>
+            <button onclick="startQuiz()" class="bg-pink-500 text-white px-10 py-4 rounded-xl font-bold text-xl md:text-2xl shadow-[0_6px_0_0_#be185d] hover:-translate-y-1 hover:shadow-[0_8px_0_0_#be185d] active:shadow-[0_0px_0_0_#be185d] active:translate-y-2 transition-all w-full md:w-auto">
+                MULAI KUIS SEKARANG
+            </button>
+        </div>
+
+        <div class="w-full max-w-4xl bg-[#2D1B69] p-5 md:p-8 rounded-2xl shadow-2xl relative overflow-hidden hidden" id="quiz-area">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gray-800">
+                <div id="progress-bar" class="h-full bg-pink-500 transition-all duration-500 shadow-[0_0_10px_#ec4899]" style="width: 0%;"></div>
+            </div>
+            
+            <div class="flex justify-between items-center mb-6 md:mb-8 text-white mt-2 text-xs md:text-base">
+                <div class="bg-black/40 px-3 py-2 rounded-lg font-bold border border-white/10">
+                    <span class="text-pink-400" id="current-question-num">1</span> / <span id="total-question-num">10</span>
+                </div>
+                
+                <div id="timer-box" class="bg-indigo-600/80 px-4 py-2 rounded-lg font-black border border-white/20 text-lg md:text-xl shadow-lg transition-colors duration-300">
+                    ⏳ <span id="timer-display">15</span>s
+                </div>
+
+                <div class="bg-black/40 px-3 py-2 rounded-lg font-bold border border-white/10 flex items-center gap-1 md:gap-2">
+                    Skor: <span id="score" class="text-yellow-400 text-lg md:text-2xl font-black">0</span>
+                </div>
+            </div>
+            
+            <div class="bg-white/10 p-6 md:p-8 rounded-xl backdrop-blur-sm mb-6 md:mb-8 shadow-inner border border-white/20 min-h-[100px] flex items-center justify-center">
+                <h3 id="question-text" class="text-lg md:text-2xl font-bold text-center text-white leading-snug">Memuat Pertanyaan...</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                <button id="btn-0" onclick="checkAnswer(0)" class="quiz-btn relative overflow-hidden bg-red-500 hover:bg-red-400 text-white p-4 md:p-6 rounded-xl flex items-center justify-center text-base md:text-xl font-bold shadow-[0_6px_0_0_#991b1b] md:shadow-[0_8px_0_0_#991b1b] active:translate-y-2 transition-all min-h-[80px]">Pilihan A</button>
+                <button id="btn-1" onclick="checkAnswer(1)" class="quiz-btn relative overflow-hidden bg-blue-500 hover:bg-blue-400 text-white p-4 md:p-6 rounded-xl flex items-center justify-center text-base md:text-xl font-bold shadow-[0_6px_0_0_#1e3a8a] md:shadow-[0_8px_0_0_#1e3a8a] active:translate-y-2 transition-all min-h-[80px]">Pilihan B</button>
+                <button id="btn-2" onclick="checkAnswer(2)" class="quiz-btn relative overflow-hidden bg-yellow-400 hover:bg-yellow-300 text-gray-900 p-4 md:p-6 rounded-xl flex items-center justify-center text-base md:text-xl font-bold shadow-[0_6px_0_0_#a16207] md:shadow-[0_8px_0_0_#a16207] active:translate-y-2 transition-all min-h-[80px]">Pilihan C</button>
+                <button id="btn-3" onclick="checkAnswer(3)" class="quiz-btn relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-white p-4 md:p-6 rounded-xl flex items-center justify-center text-base md:text-xl font-bold shadow-[0_6px_0_0_#065f46] md:shadow-[0_8px_0_0_#065f46] active:translate-y-2 transition-all min-h-[80px]">Pilihan D</button>
+            </div>
+            
+            <div class="mt-8 md:mt-10 text-center hidden" id="next-btn-container">
+                <button onclick="nextQuestion()" class="bg-pink-500 text-white px-6 py-3 md:px-8 md:py-4 w-full md:w-auto text-lg md:text-xl rounded-xl font-bold shadow-[0_6px_0_0_#be185d] hover:-translate-y-1 hover:shadow-[0_8px_0_0_#be185d] transition-all">SOAL BERIKUTNYA &rarr;</button>
+            </div>
+        </div>
+
+        <div class="w-full max-w-2xl bg-white p-8 md:p-12 rounded-2xl shadow-2xl text-center hidden border-t-8 border-blue-600" id="result-area">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Kuis Selesai!</h2>
+            <p class="text-gray-600 mb-8">Kerja bagus! Berikut adalah total poin yang berhasil kamu kumpulkan:</p>
+            
+            <div class="bg-blue-50 border-4 border-blue-200 rounded-xl p-6 mb-8 inline-block min-w-[250px]">
+                <span class="block text-gray-500 font-bold mb-2">TOTAL SKOR</span>
+                <span id="final-score" class="text-5xl md:text-6xl font-black text-blue-600">0</span>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold shadow-md hover:bg-blue-700 transition-all w-full md:w-auto text-lg">🔁 Ulangi Kuis</button>
+                <a href="index.html" class="bg-gray-200 text-gray-800 px-8 py-4 rounded-xl font-bold shadow-md hover:bg-gray-300 transition-all w-full md:w-auto text-lg">Kembali ke Materi</a>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- NAVIGASI & TOAST ---
+        function toggleMobileMenu() { document.getElementById("mobileMenu").classList.toggle("hidden"); }
+
+        function showToast(msg, colorClass) {
+            const toast = document.getElementById("toast");
+            toast.innerHTML = msg;
+            toast.className = `show shadow-xl text-white text-sm md:text-lg ${colorClass === 'green' ? 'bg-green-500' : colorClass === 'red' ? 'bg-red-500' : 'bg-gray-800'}`;
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
+        }
+
+        // ==========================================
+        // ⬇️ AREA PENGATURAN SOAL KUIS ⬇️
+        // ==========================================
+        const quizData = [
+            {
+                question: "Sistem penyimpanan arsip yang didasarkan pada pokok masalah atau perihal surat disebut...",
+                options: ["Sistem Abjad", "Sistem Tanggal", "Sistem Subjek", "Sistem Nomor"],
+                correctIndex: 2 
+            },
+            {
+                question: "Alat yang terbuat dari karton tebal dan digunakan sebagai penunjuk atau pemisah antar folder arsip adalah...",
+                options: ["Perforator", "Guide", "Ordner", "Stopmap"],
+                correctIndex: 1 
+            },
+            {
+                question: "Berapa nilai guna primer sebuah arsip?",
+                options: ["Keuangan, Hukum, Administrasi", "Sejarah, Pendidikan, Budaya", "Keluarga, Pribadi, Rahasia", "Umum, Khusus, Terbatas"],
+                correctIndex: 0
+            }
+        ];
+        // ==========================================
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isAnswered = false;
+        
+        // Variabel Timer
+        let timerInterval;
+        const TIME_LIMIT = 15; // Waktu per soal dalam detik
+        let timeLeft = TIME_LIMIT;
+
+        // Elemen DOM
+        const questionText = document.getElementById("question-text");
+        const currentNumDisplay = document.getElementById("current-question-num");
+        const totalNumDisplay = document.getElementById("total-question-num");
+        const scoreDisplay = document.getElementById("score");
+        const progressBar = document.getElementById("progress-bar");
+        const nextBtnContainer = document.getElementById("next-btn-container");
+        const timerDisplay = document.getElementById("timer-display");
+        const timerBox = document.getElementById("timer-box");
+        const buttons = [
+            document.getElementById("btn-0"),
+            document.getElementById("btn-1"),
+            document.getElementById("btn-2"),
+            document.getElementById("btn-3")
+        ];
+
+        // Set total soal di awal
+        document.addEventListener("DOMContentLoaded", () => {
+            totalNumDisplay.innerText = quizData.length;
+        });
+
+        // Fungsi Memulai Kuis dari Layar Awal
+        function startQuiz() {
+            document.getElementById("start-area").classList.add("hidden");
+            document.getElementById("quiz-area").classList.remove("hidden");
+            loadQuestion();
+        }
+
+        // Fungsi Memuat Pertanyaan Baru
+        function loadQuestion() {
+            isAnswered = false;
+            nextBtnContainer.classList.add("hidden");
+            
+            const currentQuiz = quizData[currentQuestionIndex];
+            
+            currentNumDisplay.innerText = currentQuestionIndex + 1;
+            questionText.innerText = currentQuiz.question;
+            
+            const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+            progressBar.style.width = progressPercent + "%";
+
+            buttons.forEach((btn, index) => {
+                btn.innerText = currentQuiz.options[index]; 
+                btn.classList.remove('opacity-50', 'pointer-events-none'); 
+                const extraIcons = btn.querySelectorAll('div');
+                extraIcons.forEach(icon => icon.remove());
+            });
+
+            // Mulai Timer
+            startTimer();
+        }
+
+        // Fungsi Timer
+        function startTimer() {
+            clearInterval(timerInterval); // Bersihkan timer lama jika ada
+            timeLeft = TIME_LIMIT;
+            timerDisplay.innerText = timeLeft;
+            
+            // Kembalikan desain box timer ke warna normal (Indigo)
+            timerBox.classList.remove('bg-red-600', 'animate-pulse-fast');
+            timerBox.classList.add('bg-indigo-600/80');
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+
+                // Jika waktu tersisa 5 detik atau kurang, ubah warna jadi merah & berkedip
+                if (timeLeft <= 5 && timeLeft > 0) {
+                    timerBox.classList.remove('bg-indigo-600/80');
+                    timerBox.classList.add('bg-red-600', 'animate-pulse-fast');
+                }
+
+                // Jika waktu habis
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        // Fungsi yang berjalan ketika waktu habis
+        function handleTimeOut() {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            timerBox.classList.remove('animate-pulse-fast'); // Matikan kedip merah
+            showToast('⏰ WAKTU HABIS!', 'red');
+
+            const correctIndex = quizData[currentQuestionIndex].correctIndex;
+
+            // Matikan semua tombol
+            buttons.forEach(btn => {
+                btn.classList.add('opacity-50', 'pointer-events-none');
+            });
+
+            // Langsung tunjukkan jawaban yang benar
+            const correctBtn = buttons[correctIndex];
+            correctBtn.classList.remove('opacity-50');
+            correctBtn.innerHTML += '<div class="absolute inset-0 flex items-center justify-center bg-white/30 rounded-xl border-4 border-green-400"><span class="text-4xl md:text-6xl animate-pulse">✅</span></div>';
+
+            showNextButton();
+        }
+
+        // Fungsi Memeriksa Jawaban Pengguna
+        function checkAnswer(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            clearInterval(timerInterval); // Hentikan hitung mundur timer
+            timerBox.classList.remove('animate-pulse-fast'); // Matikan efek panik jika ada
+
+            const correctIndex = quizData[currentQuestionIndex].correctIndex;
+
+            buttons.forEach(btn => btn.classList.add('opacity-50', 'pointer-events-none'));
+
+            const selectedBtn = buttons[selectedIndex];
+            selectedBtn.classList.remove('opacity-50');
+
+            if (selectedIndex === correctIndex) {
+                // Skor ditambahkan bonus jika menjawab cepat! (Opsional)
+                // Misalnya: Skor dasar 600 + (sisa detik * 10)
+                const timeBonus = timeLeft * 10;
+                const pointsEarned = 600 + timeBonus;
+                
+                score += pointsEarned;
+                scoreDisplay.innerText = score;
+                showToast(`🔥 BENAR! +${pointsEarned} Poin`, 'green');
+                selectedBtn.innerHTML += '<div class="absolute inset-0 flex items-center justify-center bg-black/20 rounded-xl"><span class="text-4xl md:text-6xl">✅</span></div>';
+            } else {
+                showToast('❌ SALAH!', 'red');
+                selectedBtn.innerHTML += '<div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl"><span class="text-4xl md:text-6xl">❌</span></div>';
+                
+                const correctBtn = buttons[correctIndex];
+                correctBtn.classList.remove('opacity-50');
+                correctBtn.innerHTML += '<div class="absolute inset-0 flex items-center justify-center bg-white/30 rounded-xl border-4 border-green-400"><span class="text-4xl md:text-6xl animate-pulse">✅</span></div>';
+            }
+
+            showNextButton();
+        }
+
+        // Menampilkan tombol "Berikutnya" atau "Lihat Hasil"
+        function showNextButton() {
+            const nextBtn = nextBtnContainer.querySelector('button');
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtn.innerText = "LIHAT HASIL AKHIR 🏆";
+            } else {
+                nextBtn.innerHTML = "SOAL BERIKUTNYA &rarr;";
+            }
+            nextBtnContainer.classList.remove('hidden');
+        }
+
+        // Fungsi Melompat ke Pertanyaan Selanjutnya
+        function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Fungsi Menampilkan Hasil
+        function showResults() {
+            clearInterval(timerInterval);
+            document.getElementById("quiz-area").classList.add("hidden");
+            document.getElementById("result-area").classList.remove("hidden");
+            document.getElementById("final-score").innerText = score;
+        }
+
+        // Fungsi Memulai Ulang Kuis setelah selesai
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreDisplay.innerText = score;
+            
+            document.getElementById("result-area").classList.add("hidden");
+            document.getElementById("quiz-area").classList.remove("hidden");
+            
+            loadQuestion(); // Langsung mulai soal tanpa ke Start Screen lagi
+        }
+    </script>
+</body>
+</html>

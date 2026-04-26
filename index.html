@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi - EduArsip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <nav class="bg-blue-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex-shrink-0 font-bold text-2xl tracking-wide">📚 EduArsip</a>
+                
+                <div class="hidden md:flex space-x-4">
+                    <a href="index.html" class="bg-blue-800 px-3 py-2 rounded-md font-medium transition">Materi</a>
+                    <a href="video.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Video</a>
+                    <a href="simulasi.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Simulasi</a>
+                    <a href="kuis.html" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-md font-bold transition shadow-sm">Main Kuis!</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 focus:outline-none">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 pb-3 shadow-inner">
+            <a href="index.html" class="block w-full text-left px-4 py-3 bg-blue-900 transition border-b border-blue-700 font-bold">Materi Pengantar</a>
+            <a href="video.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Video Arsip</a>
+            <a href="simulasi.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Simulasi Praktik</a>
+            <a href="kuis.html" class="block w-full text-left px-4 py-3 bg-pink-500 hover:bg-pink-600 font-bold transition text-white">Main Kuis!</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div class="mb-4 md:mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-blue-500 inline-block pb-2">Materi Pengantar</h2>
+            <p class="mt-2 text-sm md:text-base text-gray-600">Pelajari dasar-dasar kearsipan sebelum memulai praktik.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div class="bg-white p-5 md:p-6 rounded-xl shadow hover:-translate-y-1 hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
+                <h3 class="font-bold text-lg md:text-xl mb-2">Bab 1: Konsep Dasar Arsip</h3>
+                <p class="text-gray-600 text-sm mb-4">Pengertian, fungsi, dan peranan arsip dalam sebuah organisasi.</p>
+            </div>
+            <div class="bg-white p-5 md:p-6 rounded-xl shadow hover:-translate-y-1 hover:shadow-xl transition duration-300 border-l-4 border-yellow-500">
+                <h3 class="font-bold text-lg md:text-xl mb-2">Bab 2: Sistem Penyimpanan</h3>
+                <p class="text-gray-600 text-sm mb-4">Mengenal sistem abjad, subjek, nomor, tanggal, dan wilayah.</p>
+            </div>
+            <div class="bg-white p-5 md:p-6 rounded-xl shadow hover:-translate-y-1 hover:shadow-xl transition duration-300 border-l-4 border-green-500">
+                <h3 class="font-bold text-lg md:text-xl mb-2">Bab 3: Siklus Hidup Arsip</h3>
+                <p class="text-gray-600 text-sm mb-4">Tahapan penciptaan, penggunaan, hingga penyusutan arsip.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById("mobileMenu").classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video - EduArsip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <nav class="bg-blue-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex-shrink-0 font-bold text-2xl tracking-wide">📚 EduArsip</a>
+                
+                <div class="hidden md:flex space-x-4">
+                    <a href="index.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Materi</a>
+                    <a href="video.html" class="bg-blue-800 px-3 py-2 rounded-md font-medium transition">Video</a>
+                    <a href="simulasi.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Simulasi</a>
+                    <a href="kuis.html" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-md font-bold transition shadow-sm">Main Kuis!</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 focus:outline-none">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 pb-3 shadow-inner">
+            <a href="index.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Materi Pengantar</a>
+            <a href="video.html" class="block w-full text-left px-4 py-3 bg-blue-900 transition border-b border-blue-700 font-bold">Video Arsip</a>
+            <a href="simulasi.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Simulasi Praktik</a>
+            <a href="kuis.html" class="block w-full text-left px-4 py-3 bg-pink-500 hover:bg-pink-600 font-bold transition text-white">Main Kuis!</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div class="mb-4 md:mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-blue-500 inline-block pb-2">Galeri Video Arsip</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden group cursor-pointer">
+                <div class="bg-gray-800 h-40 md:h-48 flex items-center justify-center relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition duration-500">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 z-10">
+                        <div class="w-0 h-0 border-t-6 border-t-transparent border-l-10 border-l-blue-600 border-b-6 border-b-transparent md:border-t-8 md:border-l-12 md:border-b-8 ml-1"></div>
+                    </div>
+                </div>
+                <div class="p-4"><h3 class="font-bold text-base md:text-lg">Sistem Pemberkasan Abjad</h3></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById("mobileMenu").classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>

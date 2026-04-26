@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Praktik - EduArsip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Efek saat dokumen sedang diseret (Desktop) */
+        .dragging { opacity: 0.5; transform: scale(0.95); }
+        
+        /* Efek saat dokumen DITEPUK/DIPILIH (Mobile) */
+        .selected-doc {
+            border-color: #3b82f6 !important; /* Warna biru Tailwind */
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+            background-color: #eff6ff !important;
+        }
+
+        /* Gaya untuk Notifikasi Pop-up (Toast) */
+        #toast { 
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff; 
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed; 
+            z-index: 100; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            opacity: 0; transition: opacity 0.5s, bottom 0.5s; font-weight: bold; 
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <div id="toast">Notifikasi</div>
+
+    <nav class="bg-blue-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex-shrink-0 font-bold text-2xl tracking-wide">📚 EduArsip</a>
+                
+                <div class="hidden md:flex space-x-4">
+                    <a href="index.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Materi</a>
+                    <a href="video.html" class="hover:bg-blue-600 px-3 py-2 rounded-md font-medium transition">Video</a>
+                    <a href="simulasi.html" class="bg-blue-800 px-3 py-2 rounded-md font-medium transition">Simulasi</a>
+                    <a href="kuis.html" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-md font-bold transition shadow-sm">Main Kuis!</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 focus:outline-none">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 pb-3">
+            <a href="index.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Materi Pengantar</a>
+            <a href="video.html" class="block w-full text-left px-4 py-3 hover:bg-blue-600 transition border-b border-blue-700">Video Arsip</a>
+            <a href="simulasi.html" class="block w-full text-left px-4 py-3 bg-blue-900 transition border-b border-blue-700 font-bold">Simulasi Praktik</a>
+            <a href="kuis.html" class="block w-full text-left px-4 py-3 bg-pink-500 hover:bg-pink-600 font-bold transition text-white">Main Kuis!</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div class="mb-4 md:mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-blue-500 inline-block pb-2">Simulasi Praktik</h2>
+            <p class="mt-2 text-sm md:text-base text-gray-600">Praktikkan langsung cara mengklasifikasi dokumen.</p>
+        </div>
+
+        <div class="bg-white p-4 md:p-10 rounded-xl shadow-lg border border-gray-100">
+            <div class="bg-blue-50 text-blue-800 p-3 md:p-4 rounded-lg mb-8 text-center border border-blue-200 shadow-inner font-medium text-sm md:text-base">
+                <span class="hidden md:inline">💻 <strong>Laptop/PC:</strong> Seret (drag) dokumen dan lepaskan di folder yang tepat.</span>
+                <span class="inline md:hidden">📱 <strong>HP/Tablet:</strong> <strong>Ketuk</strong> dokumen yang ingin dipindah, lalu <strong>ketuk</strong> folder tujuannya.</span>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-12 min-h-[160px]" id="document-source">
+                <div draggable="true" id="doc1" data-target="folder-keuangan" class="draggable w-28 h-36 md:w-32 md:h-40 bg-yellow-50 border-2 border-yellow-400 border-dashed rounded-lg shadow-sm flex items-center justify-center p-2 cursor-pointer md:cursor-grab active:cursor-grabbing transition-all">
+                    <span class="text-[11px] md:text-xs font-bold text-center pointer-events-none text-gray-700">Surat Tagihan<br>PT. Makmur<br><br><span class="text-[9px] md:text-[10px] font-normal text-gray-500">(Keuangan)</span></span>
+                </div>
+                
+                <div draggable="true" id="doc2" data-target="folder-umum" class="draggable w-28 h-36 md:w-32 md:h-40 bg-green-50 border-2 border-green-400 border-dashed rounded-lg shadow-sm flex items-center justify-center p-2 cursor-pointer md:cursor-grab active:cursor-grabbing transition-all">
+                    <span class="text-[11px] md:text-xs font-bold text-center pointer-events-none text-gray-700">Undangan Rapat<br>Direksi<br><br><span class="text-[9px] md:text-[10px] font-normal text-gray-500">(Umum)</span></span>
+                </div>
+
+                <div draggable="true" id="doc3" data-target="folder-kepegawaian" class="draggable w-28 h-36 md:w-32 md:h-40 bg-blue-50 border-2 border-blue-400 border-dashed rounded-lg shadow-sm flex items-center justify-center p-2 cursor-pointer md:cursor-grab active:cursor-grabbing transition-all">
+                    <span class="text-[11px] md:text-xs font-bold text-center pointer-events-none text-gray-700">Data Cuti<br>Karyawan<br><br><span class="text-[9px] md:text-[10px] font-normal text-gray-500">(Kepegawaian)</span></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div id="folder-keuangan" class="droppable bg-gray-50 p-4 md:p-6 rounded-xl shadow-sm border-2 border-gray-300 flex flex-col items-center cursor-pointer transition-all duration-300 relative min-h-[120px] md:min-h-[140px] hover:border-blue-400">
+                    <span class="text-4xl md:text-5xl mb-2 md:mb-3 pointer-events-none">📁</span>
+                    <span class="font-bold text-sm md:text-base text-gray-700 pointer-events-none">Keuangan</span>
+                </div>
+                
+                <div id="folder-kepegawaian" class="droppable bg-gray-50 p-4 md:p-6 rounded-xl shadow-sm border-2 border-gray-300 flex flex-col items-center cursor-pointer transition-all duration-300 relative min-h-[120px] md:min-h-[140px] hover:border-blue-400">
+                    <span class="text-4xl md:text-5xl mb-2 md:mb-3 pointer-events-none">📁</span>
+                    <span class="font-bold text-sm md:text-base text-gray-700 pointer-events-none">Kepegawaian</span>
+                </div>
+                
+                <div id="folder-humas" class="droppable bg-gray-50 p-4 md:p-6 rounded-xl shadow-sm border-2 border-gray-300 flex flex-col items-center cursor-pointer transition-all duration-300 relative min-h-[120px] md:min-h-[140px] hover:border-blue-400">
+                    <span class="text-4xl md:text-5xl mb-2 md:mb-3 pointer-events-none">📁</span>
+                    <span class="font-bold text-sm md:text-base text-gray-700 pointer-events-none">Humas</span>
+                </div>
+                
+                <div id="folder-umum" class="droppable bg-gray-50 p-4 md:p-6 rounded-xl shadow-sm border-2 border-gray-300 flex flex-col items-center cursor-pointer transition-all duration-300 relative min-h-[120px] md:min-h-[140px] hover:border-blue-400">
+                    <span class="text-4xl md:text-5xl mb-2 md:mb-3 pointer-events-none">📁</span>
+                    <span class="font-bold text-sm md:text-base text-gray-700 pointer-events-none">Umum</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Fungsi Toggle Menu Mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById("mobileMenu");
+            menu.classList.toggle("hidden");
+        }
+
+        // Fungsi Toast Notification
+        function showToast(message, colorClass) {
+            const toast = document.getElementById("toast");
+            toast.innerHTML = message;
+            toast.className = `show shadow-xl text-white text-sm md:text-lg ${
+                colorClass === 'green' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2500);
+        }
+
+        const draggables = document.querySelectorAll('.draggable');
+        const droppables = document.querySelectorAll('.droppable');
+        
+        let selectedDocument = null; // Variabel untuk menyimpan dokumen yang diketuk (HP)
+
+        // --- LOGIKA 1: TAP-TO-MOVE (UNTUK HP / LAYAR SENTUH) ---
+        draggables.forEach(doc => {
+            doc.addEventListener('click', (e) => {
+                // Hapus seleksi dari semua dokumen lain
+                draggables.forEach(d => d.classList.remove('selected-doc'));
+                
+                // Pilih dokumen yang diketuk
+                selectedDocument = doc;
+                doc.classList.add('selected-doc');
+            });
+        });
+
+        // --- LOGIKA 2: DRAG AND DROP (UNTUK LAPTOP / MOUSE) ---
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+                selectedDocument = draggable; // Set juga sebagai selected saat didrag
+            });
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+                draggable.classList.remove('selected-doc');
+            });
+        });
+
+        // --- LOGIKA PENERIMA (FOLDER) ---
+        droppables.forEach(droppable => {
+            // Animasi saat di atas folder (Desktop)
+            droppable.addEventListener('dragover', e => {
+                e.preventDefault();
+                droppable.classList.add('bg-blue-100', 'border-blue-500', 'scale-105');
+            });
+            droppable.addEventListener('dragleave', () => {
+                droppable.classList.remove('bg-blue-100', 'border-blue-500', 'scale-105');
+            });
+
+            // Eksekusi saat dilepas (Drop Desktop) ATAU diketuk (Tap HP)
+            const handleDropOrTap = (e) => {
+                e.preventDefault();
+                droppable.classList.remove('bg-blue-100', 'border-blue-500', 'scale-105');
+                
+                // Jika tidak ada dokumen yang dipilih/didrag, batalkan
+                if (!selectedDocument) return;
+
+                const targetFolderId = selectedDocument.getAttribute('data-target');
+
+                // Validasi Kebenaran
+                if (droppable.id === targetFolderId) {
+                    droppable.appendChild(selectedDocument);
+                    
+                    // Kecilkan ukuran dokumen saat masuk folder
+                    selectedDocument.className = 'w-full h-auto py-2 px-1 mt-2 bg-white rounded flex items-center justify-center text-[10px] font-bold shadow border border-gray-200 pointer-events-none animate-bounce';
+                    selectedDocument.draggable = false; // Matikan fitur drag setelah berhasil
+                    
+                    showToast('✅ Dokumen berhasil diarsipkan!', 'green');
+                } else {
+                    showToast('❌ Salah folder! Coba perhatikan lagi.', 'red');
+                }
+                
+                // Reset seleksi
+                selectedDocument.classList.remove('selected-doc');
+                selectedDocument = null;
+            };
+
+            // Pasang event listener untuk klik (HP) dan drop (Laptop)
+            droppable.addEventListener('drop', handleDropOrTap);
+            droppable.addEventListener('click', handleDropOrTap);
+        });
+    </script>
+</body>
+</html>
